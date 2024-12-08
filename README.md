@@ -2,6 +2,7 @@
 
 ![PyPI - Downloads](https://img.shields.io/pypi/dd/pyya)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyya)
+[![PyPI - Link](https://img.shields.io/badge/pypi-link-blue)](https://pypi.org/project/pyya/)
 ![PyPI - Version](https://img.shields.io/pypi/v/pyya)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/pyya)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
