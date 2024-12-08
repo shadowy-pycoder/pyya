@@ -23,7 +23,7 @@ def init_config(
     default_config: Union[str, Path] = 'default.config.yaml',
     *,
     convert_keys_to_snake_case: bool = False,
-    check_for_identifiers: bool = False,
+    raise_error_non_identifiers: bool = False,
 ) -> Munch:
     def _merge_configs(_raw_data: ConfigType, _default_raw_data: ConfigType) -> None:
         for section, entry in _default_raw_data.items():
@@ -39,11 +39,10 @@ def init_config(
         if convert_keys_to_snake_case:
             logger.warning(f'converting section `{section}` to snake case')
             section = to_snake(section)
-        if check_for_identifiers:
-            if not section.isidentifier():
-                err_msg = f'section `{section}` is not a valid identifier, aborting'
-                logger.error(err_msg)
-                raise PayaError(err_msg)
+        if raise_error_non_identifiers and not section.isidentifier():
+            err_msg = f'section `{section}` is not a valid identifier, aborting'
+            logger.error(err_msg)
+            raise PayaError(err_msg)
         if keyword.iskeyword(section):
             logger.warning(f'section `{section}` is a keyword, renaming to `_{section}`')
             section = f'_{section}'
