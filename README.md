@@ -55,3 +55,13 @@ Under the hood `pyya` uses [munch](https://pypi.org/project/munch/) library to c
 `paya` automatically adds underscore prefix to Python keywords and can be configured to convert `camelCase` or `PascalCase` keys to snake_case. 
 
 If `raise_error_non_identifiers` is True, `pyya` will raise error if section name is not valid Python identifier.
+
+## Contributing
+
+Are you a developer?
+
+- Fork the repository
+- Create your feature branch: `git switch -c my-new-feature`
+- Commit your changes: `git commit -am 'Add some feature'`
+- Push to the branch: `git push origin my-new-feature`
+- Submit a pull request
