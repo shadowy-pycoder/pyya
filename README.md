@@ -1,5 +1,6 @@
 # paya - Simple tool that converts YAML configuration files to Python objects
 
+![PyPI - Downloads](https://img.shields.io/pypi/dd/pyya)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyya)
 ![PyPI - Version](https://img.shields.io/pypi/v/pyya)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/pyya)
