@@ -31,6 +31,9 @@ Homepage = "https://github.com/shadowy-pycoder/pyya"
 Repository = "https://github.com/shadowy-pycoder/pyya"
 Issues = "https://github.com/shadowy-pycoder/pyya/issues"
 
+[tool.setuptools]
+license-files = []
+
 [tool.mypy]
 python_version = "3.8"
 cache_dir = ".mypy_cache/strict"
