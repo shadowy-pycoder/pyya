@@ -1,4 +1,4 @@
-# paya - Simple tool that converts YAML configuration files to Python objects
+# pyya - Simple tool that converts YAML configuration files to Python objects
 
 ![PyPI - Downloads](https://img.shields.io/pypi/dd/pyya)
 [![ClickPy Dashboard](https://img.shields.io/badge/clickpy-dashboard-orange)](https://clickpy.clickhouse.com/dashboard/pyya)
@@ -12,7 +12,7 @@
 
 - Very `lightweight` and `simple` API (currently it contains only one function)
 - `Easy` to use
-- Based on popular and well-tested libraries (like `camel-converter` and `munch`)
+- Based on popular and well-tested libraries (like `camel-converter`, `PyYAML` and `munch`)
 - Automatically `merge` default and production configuration files
 - Convert keys in configuration files to `snake_case`
 
@@ -64,9 +64,9 @@ print(json.dumps(config.database))
 
 As you can see, `pyya` automatically merges default config file with production config file.
 
-Under the hood `pyya` uses [munch](https://pypi.org/project/munch/) library to create attribute-stylish dictionaries.
+Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse YAML files and [munch](https://pypi.org/project/munch/) library to create attribute-stylish dictionaries.
 
-`paya` automatically adds underscore prefix to Python keywords and can be configured to convert `camelCase` or `PascalCase` keys to `snake_case`. 
+`pyya` automatically adds underscore prefix to Python keywords and can be configured to convert `camelCase` or `PascalCase` keys to `snake_case`. 
 
 If `raise_error_non_identifiers=True`, `pyya` will raise error if section name is not valid Python identifier.
 

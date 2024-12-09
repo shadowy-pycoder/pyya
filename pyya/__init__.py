@@ -9,13 +9,13 @@ from munch import Munch, munchify
 
 
 logging.basicConfig(format='%(asctime)-15s \t%(levelname)-8s \t%(name)-8s \t%(message)s')
-logger = logging.getLogger('paya')
+logger = logging.getLogger(__name__)
 
 
 ConfigType = Dict[str, Any]
 
 
-class PayaError(RuntimeError): ...
+class PyyaError(RuntimeError): ...
 
 
 def init_config(
@@ -42,7 +42,7 @@ def init_config(
         if raise_error_non_identifiers and not section.isidentifier():
             err_msg = f'section `{section}` is not a valid identifier, aborting'
             logger.error(err_msg)
-            raise PayaError(err_msg)
+            raise PyyaError(err_msg)
         if keyword.iskeyword(section):
             logger.warning(f'section `{section}` is a keyword, renaming to `_{section}`')
             section = f'_{section}'
@@ -55,7 +55,7 @@ def init_config(
             raise FileNotFoundError()
     except FileNotFoundError as e:
         logger.error(e)
-        raise PayaError(f'{default_config} file is missing or empty') from None
+        raise PyyaError(f'{default_config} file is missing or empty') from None
     try:
         with open(Path(config)) as fstream:
             _raw_data: ConfigType = yaml.safe_load(fstream) or {}
@@ -68,4 +68,4 @@ def init_config(
     except Exception as e:
         message = f'{default_config} file is corrupted: {repr(e)}'
         logger.error(message)
-        raise PayaError(message) from None
+        raise PyyaError(message) from None
