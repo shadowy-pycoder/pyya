@@ -25,8 +25,9 @@ pip install pyya
 
 ## Usage
 
-Create YAML configuration files for your project:
+### Example
 
+Create YAML configuration files for your project:
 
 ```yaml
 # default.config.yaml - this file usually goes to version control system
@@ -54,6 +55,7 @@ from pyya import init_config
 config = init_config(
     'config.yaml', 'default.config.yaml', 
     convert_keys_to_snake_case = False,
+    add_underscore_prefix_to_keywords = False
     raise_error_non_identifiers = False)
 print(json.dumps(config.database))
 
@@ -66,9 +68,21 @@ As you can see, `pyya` automatically merges default config file with production 
 
 Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse YAML files and [munch](https://pypi.org/project/munch/) library to create attribute-stylish dictionaries.
 
-`pyya` automatically adds underscore prefix to Python keywords and can be configured to convert `camelCase` or `PascalCase` keys to `snake_case`. 
+ and can be configured to . 
 
-If `raise_error_non_identifiers=True`, `pyya` will raise error if section name is not valid Python identifier.
+### Flags
+
+```python 
+convert_keys_to_snake_case=True # `pyya` converts `camelCase` or `PascalCase` keys to `snake_case`
+``` 
+
+```python 
+add_underscore_prefix_to_keywords=True # `pyya` adds underscore prefix to keys that are Python keywords
+``` 
+
+```python 
+raise_error_non_identifiers=True # `pyya` raises error if key name is not valid Python identifier
+```
 
 ## Contributing
 
