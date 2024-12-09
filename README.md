@@ -68,7 +68,6 @@ As you can see, `pyya` automatically merges default config file with production 
 
 Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse YAML files and [munch](https://pypi.org/project/munch/) library to create attribute-stylish dictionaries.
 
- and can be configured to . 
 
 ### Flags
 
