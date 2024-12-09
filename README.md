@@ -73,15 +73,18 @@ Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse Y
 ### Flags
 
 ```python 
-convert_keys_to_snake_case=True # `pyya` converts `camelCase` or `PascalCase` keys to `snake_case`
+convert_keys_to_snake_case=True 
+# `pyya` converts `camelCase` or `PascalCase` keys to `snake_case`
 ``` 
 
 ```python 
-add_underscore_prefix_to_keywords=True # `pyya` adds underscore prefix to keys that are Python keywords
+add_underscore_prefix_to_keywords=True 
+# `pyya` adds underscore prefix to keys that are Python keywords
 ``` 
 
 ```python 
-raise_error_non_identifiers=True # `pyya` raises error if key name is not valid Python identifier
+raise_error_non_identifiers=True 
+# `pyya` raises error if key name is not valid Python identifier
 ```
 
 ## Contributing
