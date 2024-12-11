@@ -54,6 +54,7 @@ from pyya import init_config
 
 config = init_config(
     'config.yaml', 'default.config.yaml', 
+    merge_configs = True,
     convert_keys_to_snake_case = False,
     add_underscore_prefix_to_keywords = False
     raise_error_non_identifiers = False)
@@ -72,18 +73,22 @@ Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse Y
 ### Flags
 
 ```python 
+# merge default and production configuration files
+# setting to `False` disables other flags and makes default config optional
+# `False` means "open config file and apply `ymal.safe_load` and `munchify` with no formatting"
+merge_configs=True 
+```
+```python 
+# convert `camelCase` or `PascalCase` keys to `snake_case`
 convert_keys_to_snake_case=True 
-# `pyya` converts `camelCase` or `PascalCase` keys to `snake_case`
 ``` 
-
 ```python 
+# add underscore prefix to keys that are Python keywords
 add_underscore_prefix_to_keywords=True 
-# `pyya` adds underscore prefix to keys that are Python keywords
 ``` 
-
 ```python 
+# raise error if key name is not valid Python identifier
 raise_error_non_identifiers=True 
-# `pyya` raises error if key name is not valid Python identifier
 ```
 
 ## Contributing

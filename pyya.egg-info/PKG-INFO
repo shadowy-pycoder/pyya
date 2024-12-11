@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyya
-Version: 0.1.3
+Version: 0.1.4
 Summary: Convert YAML configuration files to Python objects
 Author-email: shadowy-pycoder <shadowy-pycoder@example.com>
 Project-URL: Homepage, https://github.com/shadowy-pycoder/pyya
@@ -80,6 +80,7 @@ from pyya import init_config
 
 config = init_config(
     'config.yaml', 'default.config.yaml', 
+    merge_configs = True,
     convert_keys_to_snake_case = False,
     add_underscore_prefix_to_keywords = False
     raise_error_non_identifiers = False)
@@ -94,23 +95,25 @@ As you can see, `pyya` automatically merges default config file with production 
 
 Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse YAML files and [munch](https://pypi.org/project/munch/) library to create attribute-stylish dictionaries.
 
- and can be configured to . 
 
 ### Flags
 
 ```python 
+# merge default and production configuration files
+# setting to `False` disables other flags
+merge_configs=True 
+```
+```python 
+# convert `camelCase` or `PascalCase` keys to `snake_case`
 convert_keys_to_snake_case=True 
-# `pyya` converts `camelCase` or `PascalCase` keys to `snake_case`
 ``` 
-
 ```python 
+# add underscore prefix to keys that are Python keywords
 add_underscore_prefix_to_keywords=True 
-# `pyya` adds underscore prefix to keys that are Python keywords
 ``` 
-
 ```python 
+# raise error if key name is not valid Python identifier
 raise_error_non_identifiers=True 
-# `pyya` raises error if key name is not valid Python identifier
 ```
 
 ## Contributing
