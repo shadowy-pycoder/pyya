@@ -2,6 +2,7 @@
 
 ![PyPI - Downloads](https://img.shields.io/pypi/dd/pyya)
 [![ClickPy Dashboard](https://img.shields.io/badge/clickpy-dashboard-orange)](https://clickpy.clickhouse.com/dashboard/pyya)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/shadowy-pycoder/pyya/total)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyya)
 [![PyPI - Link](https://img.shields.io/badge/pypi-link-blue)](https://pypi.org/project/pyya/)
 ![PyPI - Version](https://img.shields.io/pypi/v/pyya)
@@ -22,6 +23,13 @@
 ```shell
 pip install pyya
 ```
+
+Or download a specific version from [Releases](https://github.com/shadowy-pycoder/pyya/releases) page and install it with:
+
+```shell    
+pip install /path/to/pyya-[version]-py3-none-any.whl
+```
+
 
 ## Usage
 

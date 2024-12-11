@@ -100,7 +100,8 @@ Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse Y
 
 ```python 
 # merge default and production configuration files
-# setting to `False` disables other flags
+# setting to `False` disables other flags and makes default config optional
+# `False` means "open config file and apply `ymal.safe_load` and `munchify` with no formatting"
 merge_configs=True 
 ```
 ```python 
