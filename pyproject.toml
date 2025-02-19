@@ -1,6 +1,6 @@
 [project]
 name = "pyya"
-version = "0.1.4"
+version = "0.1.5"
 authors = [
   { name="shadowy-pycoder", email="shadowy-pycoder@example.com" },
 ]
@@ -45,7 +45,7 @@ warn_no_return = true
 disallow_any_unimported = false
 warn_unused_configs = true
 disallow_any_generics = true
-disallow_subclassing_any = true
+disallow_subclassing_any = false
 disallow_untyped_calls = false
 disallow_untyped_defs = true
 disallow_incomplete_defs = true

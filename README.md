@@ -44,6 +44,10 @@ database:
     port: 5432
     username: postgres
     password: postgres
+
+redis:
+    host: localhost
+    port: 6379
 ```
 
 ```yaml
@@ -53,7 +57,7 @@ database:
     password: password
 ```
 
-Import configuration files in your Python code with pyya:
+Import configuration files in your Python code with `pyya`:
 
 ```python
 import json
@@ -63,13 +67,14 @@ from pyya import init_config
 config = init_config(
     'config.yaml', 'default.config.yaml', 
     merge_configs = True,
+    sections_ignored_on_merge = ['redis'], # do not include redis on your config
     convert_keys_to_snake_case = False,
     add_underscore_prefix_to_keywords = False
     raise_error_non_identifiers = False)
-print(json.dumps(config.database))
+print(json.dumps(config))
 
 # Output:
-# {"host": "localhost", "port": 5432, "username": "username", "password": "password"}
+# {database: {"host": "localhost", "port": 5432, "username": "username", "password": "password"}}
 
 ```
 
@@ -85,6 +90,11 @@ Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse Y
 # setting to `False` disables other flags and makes default config optional
 # `False` means "open config file and apply `ymal.safe_load` and `munchify` with no formatting"
 merge_configs=True 
+```
+```python
+# list of sections to ignore when merging configs
+# it is useful when you have examples in your default config but do not want to have in the main one
+sections_ignored_on_merge: Optional[List[str]] = None
 ```
 ```python 
 # convert `camelCase` or `PascalCase` keys to `snake_case`

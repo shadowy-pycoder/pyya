@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyya
-Version: 0.1.4
+Version: 0.1.5
 Summary: Convert YAML configuration files to Python objects
 Author-email: shadowy-pycoder <shadowy-pycoder@example.com>
 Project-URL: Homepage, https://github.com/shadowy-pycoder/pyya
@@ -28,6 +28,7 @@ Requires-Dist: types-pyyaml>=6.0.12.20240917
 
 ![PyPI - Downloads](https://img.shields.io/pypi/dd/pyya)
 [![ClickPy Dashboard](https://img.shields.io/badge/clickpy-dashboard-orange)](https://clickpy.clickhouse.com/dashboard/pyya)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/shadowy-pycoder/pyya/total)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyya)
 [![PyPI - Link](https://img.shields.io/badge/pypi-link-blue)](https://pypi.org/project/pyya/)
 ![PyPI - Version](https://img.shields.io/pypi/v/pyya)
@@ -49,6 +50,13 @@ Requires-Dist: types-pyyaml>=6.0.12.20240917
 pip install pyya
 ```
 
+Or download a specific version from [Releases](https://github.com/shadowy-pycoder/pyya/releases) page and install it with:
+
+```shell    
+pip install /path/to/pyya-[version]-py3-none-any.whl
+```
+
+
 ## Usage
 
 ### Example
@@ -62,6 +70,10 @@ database:
     port: 5432
     username: postgres
     password: postgres
+
+redis:
+    host: localhost
+    port: 6379
 ```
 
 ```yaml
@@ -71,7 +83,7 @@ database:
     password: password
 ```
 
-Import configuration files in your Python code with pyya:
+Import configuration files in your Python code with `pyya`:
 
 ```python
 import json
@@ -81,13 +93,14 @@ from pyya import init_config
 config = init_config(
     'config.yaml', 'default.config.yaml', 
     merge_configs = True,
+    sections_ignored_on_merge = ['redis'], # do not include redis on your config
     convert_keys_to_snake_case = False,
     add_underscore_prefix_to_keywords = False
     raise_error_non_identifiers = False)
-print(json.dumps(config.database))
+print(json.dumps(config))
 
 # Output:
-# {"host": "localhost", "port": 5432, "username": "username", "password": "password"}
+# {database: {"host": "localhost", "port": 5432, "username": "username", "password": "password"}}
 
 ```
 
@@ -103,6 +116,11 @@ Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse Y
 # setting to `False` disables other flags and makes default config optional
 # `False` means "open config file and apply `ymal.safe_load` and `munchify` with no formatting"
 merge_configs=True 
+```
+```python
+# list of sections to ignore when merging configs
+# it is useful when you have examples in your default config but do not want to have in the main one
+sections_ignored_on_merge: Optional[List[str]] = None
 ```
 ```python 
 # convert `camelCase` or `PascalCase` keys to `snake_case`
