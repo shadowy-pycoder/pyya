@@ -13,10 +13,10 @@
 
 - Very `lightweight` and `simple` API (currently it contains only one function)
 - `Easy` to use
-- Based on popular and well-tested libraries (like `camel-converter`, `PyYAML` and `munch`)
+- Based on popular and well-tested libraries (like `pydantic`, `camel-converter`, `PyYAML` and `munch`)
 - Automatically `merge` default and production configuration files
 - Convert keys in configuration files to `snake_case`
-
+- YAML validation with `Pydantic` models
 
 ## Installation
 
@@ -26,10 +26,9 @@ pip install pyya
 
 Or download a specific version from [Releases](https://github.com/shadowy-pycoder/pyya/releases) page and install it with:
 
-```shell    
+```shell
 pip install /path/to/pyya-[version]-py3-none-any.whl
 ```
-
 
 ## Usage
 
@@ -39,22 +38,22 @@ Create YAML configuration files for your project:
 
 ```yaml
 # default.config.yaml - this file usually goes to version control system
-database:   
-    host: localhost
-    port: 5432
-    username: postgres
-    password: postgres
+database:
+  host: localhost
+  port: 5432
+  username: postgres
+  password: postgres
 
 redis:
-    host: localhost
-    port: 6379
+  host: localhost
+  port: 6379
 ```
 
 ```yaml
 # config.yaml - this file for production usage
-database:   
-    username: username
-    password: password
+database:
+  username: username
+  password: password
 ```
 
 Import configuration files in your Python code with `pyya`:
@@ -62,15 +61,20 @@ Import configuration files in your Python code with `pyya`:
 ```python
 import json
 
-from pyya import init_config
+from pyya import init_config, logger
+
+logger.setLevel(logging.INFO)
 
 config = init_config(
-    'config.yaml', 'default.config.yaml', 
+    'config.yaml', 'default.config.yaml',
     merge_configs = True,
-    sections_ignored_on_merge = ['redis'], # do not include redis on your config
+    sections_ignored_on_merge = ['redis'], # do not include redis in your config
     convert_keys_to_snake_case = False,
     add_underscore_prefix_to_keywords = False
-    raise_error_non_identifiers = False)
+    raise_error_non_identifiers = False,
+    validate_data_types = True,
+    allow_extra_sections = True,
+    )
 print(json.dumps(config))
 
 # Output:
@@ -82,31 +86,45 @@ As you can see, `pyya` automatically merges default config file with production 
 
 Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse YAML files and [munch](https://pypi.org/project/munch/) library to create attribute-stylish dictionaries.
 
-
 ### Flags
 
-```python 
+```python
 # merge default and production configuration files
 # setting to `False` disables other flags and makes default config optional
-# `False` means "open config file and apply `ymal.safe_load` and `munchify` with no formatting"
-merge_configs=True 
+# `False` means "open config file and apply `yaml.safe_load` and `munchify` with no formatting"
+merge_configs=True
 ```
+
 ```python
 # list of sections to ignore when merging configs
 # it is useful when you have examples in your default config but do not want to have in the main one
 sections_ignored_on_merge: Optional[List[str]] = None
 ```
-```python 
+
+```python
 # convert `camelCase` or `PascalCase` keys to `snake_case`
-convert_keys_to_snake_case=True 
-``` 
-```python 
+convert_keys_to_snake_case=False
+```
+
+```python
 # add underscore prefix to keys that are Python keywords
-add_underscore_prefix_to_keywords=True 
-``` 
-```python 
+add_underscore_prefix_to_keywords=False
+```
+
+```python
 # raise error if key name is not valid Python identifier
-raise_error_non_identifiers=True 
+raise_error_non_identifiers=False
+```
+
+```python
+# raise error if data types in config are not the same as default (makes sense only if merge is enabled)
+# validation based on data types inferred from default config
+validate_data_types=True
+```
+
+```python
+# raise error if there are extra sections in config (may break if section name formatting is enabled)
+allow_extra_sections=True
 ```
 
 ## Contributing
