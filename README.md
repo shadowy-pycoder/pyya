@@ -74,6 +74,7 @@ config = init_config(
     raise_error_non_identifiers = False,
     validate_data_types = True,
     allow_extra_sections = True,
+    warn_extra_sections = True,
     )
 print(json.dumps(config))
 
@@ -98,7 +99,7 @@ merge_configs=True
 ```python
 # list of sections to ignore when merging configs
 # it is useful when you have examples in your default config but do not want to have in the main one
-sections_ignored_on_merge: Optional[List[str]] = None
+sections_ignored_on_merge=None
 ```
 
 ```python
@@ -125,6 +126,11 @@ validate_data_types=True
 ```python
 # raise error if there are extra sections in config (may break if section name formatting is enabled)
 allow_extra_sections=True
+```
+
+```python
+# warn about extra keys and values on the first level
+warn_extra_sections=True
 ```
 
 ## Contributing

@@ -1,9 +1,11 @@
 import keyword
 import logging
+from copy import deepcopy
 from pathlib import Path
+from pprint import pformat
 from typing import Any, Dict, List, Literal, Optional, Type, Union
 
-import yaml
+import yaml as _yaml
 from camel_converter import to_snake as _to_snake
 from munch import Munch as _Munch
 from munch import munchify as _munchify
@@ -34,6 +36,7 @@ def init_config(
     raise_error_non_identifiers: bool = False,
     validate_data_types: bool = True,
     allow_extra_sections: bool = True,
+    warn_extra_sections: bool = True,
 ) -> PyyaConfig:
     """Initialize attribute-stylish configuration from YAML file.
 
@@ -47,6 +50,7 @@ def init_config(
         raise_error_non_identifiers: raise error if config section name is not a valid identifier
         validate_data_types: raise error if data types in config are not the same as default (makes sense only if merge is enabled)
         allow_extra_sections: raise error if there are extra sections in config (may break if section name formatting is enabled)
+        warn_extra_sections: warn about extra keys and values on the first level
     """
 
     def _merge_configs(
@@ -67,7 +71,7 @@ def init_config(
                 sections.append(f_section)
                 if f_section not in _raw_data:
                     _raw_data[f_section] = entry
-                    logger.info(f'section `{".".join(sections)}` with value `{entry}` taken from {default_config}')
+                    logger.debug(f'section `{".".join(sections)}` with value `{entry}` taken from {default_config}')
                 else:
                     logger.debug(f'section `{".".join(sections)}` already exists in {config}, skipping')
             elif isinstance(entry, Dict):
@@ -127,21 +131,21 @@ def init_config(
 
     try:
         with open(Path(config)) as fstream:
-            _raw_data: ConfigType = yaml.safe_load(fstream) or {}
-    except yaml.YAMLError as e:
+            _raw_data: ConfigType = _yaml.safe_load(fstream) or {}
+    except _yaml.YAMLError as e:
         err_msg = f'{config} file is corrupted: {e}'
         logger.error(err_msg)
         raise PyyaError(err_msg) from None
     except FileNotFoundError:
-        logger.info(f'{config} file not found, using {default_config}')
+        logger.warning(f'{config} file not found, using {default_config}')
         _raw_data = {}
 
     if merge_configs:
         try:
             try:
                 with open(Path(default_config)) as fstream:
-                    _default_raw_data: Optional[ConfigType] = yaml.safe_load(fstream)
-            except yaml.YAMLError as e:
+                    _default_raw_data: Optional[ConfigType] = _yaml.safe_load(fstream)
+            except _yaml.YAMLError as e:
                 err_msg = f'{default_config} file is corrupted: {e}'
                 logger.error(err_msg)
                 raise PyyaError(err_msg) from None
@@ -150,17 +154,43 @@ def init_config(
         except FileNotFoundError as e:
             logger.error(e)
             raise PyyaError(f'{default_config} file is missing or empty') from None
+        # create copy for logging (only overwritten fields)
+        _raw_data_copy = deepcopy(_raw_data)
         _merge_configs(_raw_data, _default_raw_data)
         if validate_data_types:
             ConfigModel = _model_from_dict('ConfigModel', _default_raw_data, allow_extra_sections)
             try:
-                ConfigModel.model_validate(_raw_data)
+                validated_raw_data = ConfigModel.model_validate(_raw_data)
+                if validated_raw_data.model_extra:
+                    extra_sections = validated_raw_data.model_extra
+                    # remove formatted sections from extra
+                    for k in _default_raw_data:
+                        sk = _sanitize_section(k)
+                        if sk in extra_sections:
+                            extra_sections.pop(sk)
+                    if extra_sections and warn_extra_sections:
+                        logger.warning(
+                            f'\n\nThe following extra sections will be ignored:\n\n{pformat(extra_sections)}'
+                        )
+                    # remove extra sections from resulting config
+                    for k in extra_sections:
+                        _raw_data_copy.pop(k, None)
+                        _raw_data.pop(k, None)
             except Exception as e:
                 err_msg = f'Failed validating config file: {e!r}'
                 logger.error(err_msg)
                 raise PyyaError(err_msg) from None
+        # replace formatted sections in the copy of the config for logging
+        for k in _raw_data_copy.copy():
+            sk = _sanitize_section(k)
+            if sk in _raw_data:
+                _raw_data_copy[sk] = _raw_data[sk]
+                _raw_data_copy.pop(k, None)
+        logger.info(f'\n\nThe following sections were overwritten:\n\n{pformat(_raw_data_copy)}')
     try:
-        return _munchify(_raw_data)
+        raw_data = _munchify(_raw_data)
+        logger.debug(f'\n\nResulting config:\n\n{pformat(raw_data)}')
+        return raw_data
     except Exception as e:
         err_msg = f'Failed parsing config file: {e!r}'
         logger.error(err_msg)
