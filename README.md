@@ -129,7 +129,7 @@ allow_extra_sections=True
 ```
 
 ```python
-# warn about extra keys and values on the first level
+# warn about extra keys and values
 warn_extra_sections=True
 ```
 

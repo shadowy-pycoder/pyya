@@ -1,13 +1,17 @@
 [project]
 name = "pyya"
-version = "0.1.7"
-authors = [
-  { name = "shadowy-pycoder", email = "shadowy-pycoder@example.com" },
-]
+version = "0.1.8"
 description = "Convert YAML configuration files to Python objects"
 readme = "README.md"
 requires-python = ">=3.8"
+authors = [
+  { name = "shadowy-pycoder", email = "shadowy-pycoder@example.com" },
+]
 classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: MacOS :: MacOS X",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
@@ -15,10 +19,6 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: MacOS :: MacOS X",
-  "Operating System :: Microsoft :: Windows",
-  "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
   "camel-converter>=3.1.2",
@@ -30,11 +30,8 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/shadowy-pycoder/pyya"
-Repository = "https://github.com/shadowy-pycoder/pyya"
 Issues = "https://github.com/shadowy-pycoder/pyya/issues"
-
-[tool.setuptools]
-license-files = []
+Repository = "https://github.com/shadowy-pycoder/pyya"
 
 [tool.mypy]
 python_version = "3.8"
@@ -59,13 +56,13 @@ strict_equality = true
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-pythonpath = "."
 filterwarnings = [
   "ignore::DeprecationWarning",
   "ignore::PendingDeprecationWarning",
   "ignore::ImportWarning",
   "ignore::ResourceWarning",
 ]
+pythonpath = "."
 asyncio_mode = "auto"
 env_files = ".test.env"
 env_override_existing_values = true
@@ -118,3 +115,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.isort]
 lines-after-imports = 2
+
+[tool.setuptools]
+license-files = []

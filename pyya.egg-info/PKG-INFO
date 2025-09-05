@@ -1,11 +1,15 @@
 Metadata-Version: 2.1
 Name: pyya
-Version: 0.1.7
+Version: 0.1.8
 Summary: Convert YAML configuration files to Python objects
 Author-email: shadowy-pycoder <shadowy-pycoder@example.com>
 Project-URL: Homepage, https://github.com/shadowy-pycoder/pyya
-Project-URL: Repository, https://github.com/shadowy-pycoder/pyya
 Project-URL: Issues, https://github.com/shadowy-pycoder/pyya/issues
+Project-URL: Repository, https://github.com/shadowy-pycoder/pyya
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: POSIX :: Linux
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
@@ -13,10 +17,6 @@ Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Classifier: Programming Language :: Python :: 3.12
 Classifier: Programming Language :: Python :: 3.13
-Classifier: License :: OSI Approved :: MIT License
-Classifier: Operating System :: MacOS :: MacOS X
-Classifier: Operating System :: Microsoft :: Windows
-Classifier: Operating System :: POSIX :: Linux
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
 Requires-Dist: camel-converter>=3.1.2
@@ -156,7 +156,7 @@ allow_extra_sections=True
 ```
 
 ```python
-# warn about extra keys and values on the first level
+# warn about extra keys and values
 warn_extra_sections=True
 ```
 

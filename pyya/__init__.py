@@ -3,13 +3,13 @@ import logging
 from copy import deepcopy
 from pathlib import Path
 from pprint import pformat
-from typing import Any, Dict, List, Literal, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 import yaml as _yaml
 from camel_converter import to_snake as _to_snake
 from munch import Munch as _Munch
 from munch import munchify as _munchify
-from pydantic import BaseModel, ConfigDict, create_model
+from pydantic import BaseModel, ConfigDict, Field, create_model, model_validator
 
 
 logging.basicConfig(format='%(asctime)-15s \t%(levelname)-8s \t%(name)-8s \t%(message)s')
@@ -50,7 +50,7 @@ def init_config(
         raise_error_non_identifiers: raise error if config section name is not a valid identifier
         validate_data_types: raise error if data types in config are not the same as default (makes sense only if merge is enabled)
         allow_extra_sections: raise error if there are extra sections in config (may break if section name formatting is enabled)
-        warn_extra_sections: warn about extra keys and values on the first level
+        warn_extra_sections: warn about extra keys and values
     """
 
     def _merge_configs(
@@ -70,6 +70,8 @@ def init_config(
                 f_section = _sanitize_section(section)
                 sections.append(f_section)
                 if f_section not in _raw_data:
+                    if isinstance(entry, Dict):
+                        entry = _sanitize_keys(entry)
                     _raw_data[f_section] = entry
                     logger.debug(f'section `{".".join(sections)}` with value `{entry}` taken from {default_config}')
                 else:
@@ -77,6 +79,8 @@ def init_config(
             elif isinstance(entry, Dict):
                 sections.append(section)
                 _merge_configs(_raw_data[section], entry, sections)
+                f_section = _sanitize_section(section)
+                _raw_data[f_section] = _raw_data.pop(section, None)
             # TODO: add support for merging lists
             else:
                 f_section = _sanitize_section(section)
@@ -109,16 +113,64 @@ def init_config(
                 _pop_ignored_keys(entry)
         return data
 
-    def _model_from_dict(name: str, data: Dict[str, Any], extra: bool) -> Type[BaseModel]:
+    def _sanitize_keys(data: ConfigType) -> ConfigType:
+        for key, entry in data.copy().items():
+            if isinstance(entry, Dict):
+                _sanitize_keys(entry)
+            else:
+                data[_sanitize_section(key)] = data.pop(key, None)
+        return data
+
+    def _pop_nested(d: Dict[str, Any], dotted_key: str, default: Any = None) -> Any:
+        keys = dotted_key.split('.')
+        current = d
+
+        for k in keys[:-1]:
+            if not isinstance(current, dict) or k not in current:
+                return default
+            current = current[k]
+
+        return current.pop(keys[-1], default)
+
+    # https://stackoverflow.com/questions/73958753/return-all-extra-passed-to-pydantic-model
+    class NewBase(BaseModel):
+        model_config = ConfigDict(strict=True, extra='allow' if allow_extra_sections else 'forbid')
+        extra: Dict[str, Any] = Field(default={}, exclude=True)
+
+        @model_validator(mode='before')
+        @classmethod
+        def validator(cls, values: Any) -> Any:
+            if cls.model_config.get('extra') == 'allow':
+                extra, valid = {}, {}
+                for key, value in values.items():
+                    if key in cls.model_fields:
+                        valid[key] = value
+                    else:
+                        extra[key] = value
+                valid['extra'] = extra
+                return valid
+            return values
+
+        @property
+        def extra_flat(self) -> Any:
+            extra_flat = {**self.extra}
+            for name, value in self:
+                if isinstance(value, NewBase):
+                    data = {f'{name}.{k}': v for k, v in value.extra_flat.items()}
+                    extra_flat.update(data)
+            return extra_flat
+
+    def _model_from_dict(name: str, data: Dict[str, Any]) -> Type[BaseModel]:
         fields: Dict[Any, Any] = {}
         for section, entry in data.items():
+            section = _sanitize_section(section)
             if isinstance(entry, Dict):
-                nested_model = _model_from_dict(section, entry, extra)
+                nested_model = _model_from_dict(section, entry)
                 fields[section] = (nested_model, entry)
             elif isinstance(entry, list) and entry:
                 first_item = entry[0]
                 if isinstance(first_item, Dict):
-                    nested_model = _model_from_dict(f'{section.capitalize()}Item', first_item, extra)
+                    nested_model = _model_from_dict(f'{section.capitalize()}Item', first_item)
                     fields[section] = (List[nested_model], entry)  # type: ignore
                 else:
                     fields[section] = (List[type(first_item)], entry)  # type: ignore
@@ -126,8 +178,8 @@ def init_config(
                 fields[section] = (List[Any], entry)
             else:
                 fields[section] = (type(entry), entry)
-        extra_value: Literal['allow', 'forbid'] = 'allow' if extra else 'forbid'
-        return create_model(name, **fields, __config__=ConfigDict(strict=True, extra=extra_value))
+        model = create_model(name, **fields, __base__=NewBase)
+        return model
 
     try:
         with open(Path(config)) as fstream:
@@ -157,25 +209,20 @@ def init_config(
         # create copy for logging (only overwritten fields)
         _raw_data_copy = deepcopy(_raw_data)
         _merge_configs(_raw_data, _default_raw_data)
+        logger.debug(f'\n\nResulting config after merge:\n\n{pformat(_raw_data)}')
         if validate_data_types:
-            ConfigModel = _model_from_dict('ConfigModel', _default_raw_data, allow_extra_sections)
+            ConfigModel = _model_from_dict('ConfigModel', _default_raw_data)
             try:
                 validated_raw_data = ConfigModel.model_validate(_raw_data)
-                if validated_raw_data.model_extra:
-                    extra_sections = validated_raw_data.model_extra
-                    # remove formatted sections from extra
-                    for k in _default_raw_data:
-                        sk = _sanitize_section(k)
-                        if sk in extra_sections:
-                            extra_sections.pop(sk)
-                    if extra_sections and warn_extra_sections:
+                if extra_sections := validated_raw_data.extra_flat:  # type: ignore
+                    if warn_extra_sections:
                         logger.warning(
                             f'\n\nThe following extra sections will be ignored:\n\n{pformat(extra_sections)}'
                         )
                     # remove extra sections from resulting config
                     for k in extra_sections:
-                        _raw_data_copy.pop(k, None)
-                        _raw_data.pop(k, None)
+                        _pop_nested(_raw_data_copy, k)
+                        _pop_nested(_raw_data, k)
             except Exception as e:
                 err_msg = f'Failed validating config file: {e!r}'
                 logger.error(err_msg)
@@ -184,9 +231,10 @@ def init_config(
         for k in _raw_data_copy.copy():
             sk = _sanitize_section(k)
             if sk in _raw_data:
-                _raw_data_copy[sk] = _raw_data[sk]
                 _raw_data_copy.pop(k, None)
-        logger.info(f'\n\nThe following sections were overwritten:\n\n{pformat(_raw_data_copy)}')
+                _raw_data_copy[sk] = _raw_data[sk]
+        if _raw_data_copy:
+            logger.info(f'\n\nThe following sections were overwritten:\n\n{pformat(_raw_data_copy)}')
     try:
         raw_data = _munchify(_raw_data)
         logger.debug(f'\n\nResulting config:\n\n{pformat(raw_data)}')
