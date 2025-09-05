@@ -38,7 +38,6 @@ python_version = "3.8"
 cache_dir = ".mypy_cache/strict"
 allow_redefinition = true
 strict_optional = false
-show_error_codes = true
 show_column_numbers = true
 warn_no_return = true
 disallow_any_unimported = false

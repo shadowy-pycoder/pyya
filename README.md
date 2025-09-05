@@ -54,6 +54,7 @@ redis:
 database:
   username: username
   password: password
+  name: db
 ```
 
 Import configuration files in your Python code with `pyya`:
@@ -67,11 +68,11 @@ logger.setLevel(logging.INFO)
 
 config = init_config(
     'config.yaml', 'default.config.yaml',
-    merge_configs = True,
-    sections_ignored_on_merge = ['redis'], # do not include redis in your config
     convert_keys_to_snake_case = False,
     add_underscore_prefix_to_keywords = False,
     raise_error_non_identifiers = False,
+    merge_configs = True,
+    sections_ignored_on_merge = ['redis'], # do not include redis in your config
     validate_data_types = True,
     allow_extra_sections = True,
     warn_extra_sections = True,
@@ -79,6 +80,10 @@ config = init_config(
 print(json.dumps(config))
 
 # Output:
+# 2025-09-05 09:13:17,280         WARNING         pyya            The following extra sections will be ignored:
+# {'database.name': 'db'}
+# 2025-09-05 09:13:17,281         INFO            pyya            The following sections were overwritten:
+# {database: {'host': 'localhost', 'port': 5432}}
 # {database: {"host": "localhost", "port": 5432, "username": "username", "password": "password"}}
 
 ```
@@ -88,19 +93,6 @@ As you can see, `pyya` automatically merges default config file with production 
 Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse YAML files and [munch](https://pypi.org/project/munch/) library to create attribute-stylish dictionaries.
 
 ### Flags
-
-```python
-# merge default and production configuration files
-# setting to `False` disables other flags and makes default config optional
-# `False` means "open config file and apply `yaml.safe_load` and `munchify` with no formatting"
-merge_configs=True
-```
-
-```python
-# list of sections to ignore when merging configs
-# it is useful when you have examples in your default config but do not want to have in the main one
-sections_ignored_on_merge=None
-```
 
 ```python
 # convert `camelCase` or `PascalCase` keys to `snake_case`
@@ -118,18 +110,31 @@ raise_error_non_identifiers=False
 ```
 
 ```python
-# raise error if data types in config are not the same as default (makes sense only if merge is enabled)
+# merge default and production configuration files
+# setting to `False` disables below flags and makes default config optional
+# `False` means "open config file and apply `yaml.safe_load` and `munchify` with specified formatting"
+merge_configs=True
+```
+
+```python
+# list of sections to ignore when merging configs
+# it is useful when you have examples in your default config but do not want to have in the main one
+sections_ignored_on_merge=None
+```
+
+```python
+# raise error if data types in production config are not the same as default
 # validation based on data types inferred from default config
 validate_data_types=True
 ```
 
 ```python
-# raise error if there are extra sections in config (may break if section name formatting is enabled)
+# raise error on any extra sections in production config
 allow_extra_sections=True
 ```
 
 ```python
-# warn about extra keys and values
+# if extra sections are allowed, warn about extra keys and values
 warn_extra_sections=True
 ```
 

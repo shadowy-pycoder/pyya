@@ -2,6 +2,7 @@ LICENSE
 README.md
 pyproject.toml
 pyya/__init__.py
+pyya/py.typed
 pyya.egg-info/PKG-INFO
 pyya.egg-info/SOURCES.txt
 pyya.egg-info/dependency_links.txt
