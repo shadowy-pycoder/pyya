@@ -1,0 +1,2 @@
+[console_scripts]
+pyya = pyya.__main__:main
