@@ -8,7 +8,7 @@ from pyya import PyyaError, init_config, logger
 def main() -> None:
     parser = argparse.ArgumentParser(description='stub generator for pyya')
     parser.add_argument(
-        '-i', '--input', default='default.config.yaml', help='path to YAML file from which to generate stub file'
+        '-i', '--input', default='default.config.yaml', help='path to YAML/TOML file from which to generate stub file'
     )
     parser.add_argument('-o', '--output', default='config.pyi', help='path to resulting stub pyi file')
     parser.add_argument('--var-name', default='config', help='variable name to refer to config object')

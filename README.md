@@ -1,4 +1,4 @@
-# pyya - Simple tool that converts YAML configuration files to Python objects
+# pyya - Simple tool that converts YAML/TOML configuration files to Python objects
 
 ![PyPI - Downloads](https://img.shields.io/pypi/dd/pyya)
 [![ClickPy Dashboard](https://img.shields.io/badge/clickpy-dashboard-orange)](https://clickpy.clickhouse.com/dashboard/pyya)
@@ -13,10 +13,10 @@
 
 - Very `lightweight` and `simple` API (currently it contains only one function)
 - `Easy` to use
-- Based on popular and well-tested libraries (like `pydantic`, `camel-converter`, `PyYAML` and `munch`)
+- Based on popular and well-tested libraries (like `pydantic`, `camel-converter`, `PyYAML`, `toml` and `munch`)
 - Automatically `merge` default and production configuration files
 - Convert keys in configuration files to `snake_case`
-- YAML validation with `Pydantic` models
+- YAML/TOML validation with `Pydantic` models
 - Generate stub files for your dynamic configuration with `pyya` CLI tool.
 
 ## Installation
@@ -93,6 +93,8 @@ print(json.dumps(config))
 As you can see, `pyya` automatically merges default config file with production config file.
 
 Under the hood `pyya` uses [PyYAML](https://pypi.org/project/PyYAML/) to parse YAML files and [munch](https://pypi.org/project/munch/) library to create attribute-stylish dictionaries.
+
+For TOML files the logic is the same except you should point `pyya` to correct TOML files (e.g. `config.toml`)
 
 ### Flags
 

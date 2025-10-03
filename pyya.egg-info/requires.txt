@@ -2,4 +2,6 @@ camel-converter>=3.1.2
 munch>=4.0.0
 pydantic>=2.5.2
 pyyaml>=6.0.2
+toml>=0.10.2
 types-pyyaml>=6.0.12.20240917
+types-toml>=0.10.8.20240310
