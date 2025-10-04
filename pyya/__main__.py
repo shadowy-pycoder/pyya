@@ -14,6 +14,7 @@ def main() -> None:
     parser.add_argument('--var-name', default='config', help='variable name to refer to config object')
     parser.add_argument('--to-snake', action='store_true', help='convert config section names to snake case')
     parser.add_argument('--add-prefix', action='store_true', help='add underscore prefix to Python keywords')
+    parser.add_argument('--replace-dashes', action='store_true', help='replace dashes with underscores in names')
     parser.add_argument('--debug', action='store_true', help='print debug messages')
     args = parser.parse_args()
     logger.setLevel(logging.INFO)
@@ -25,6 +26,7 @@ def main() -> None:
             args.input,
             convert_keys_to_snake_case=args.to_snake,
             add_underscore_prefix_to_keywords=args.add_prefix,
+            replace_dashes_with_underscores=args.replace_dashes,
             _generate_stub=True,
             _stub_variable_name=args.var_name,
         )

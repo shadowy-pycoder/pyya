@@ -1,0 +1,32 @@
+[app]
+name = "myapp_changed"
+debug = true
+port = 9091
+
+[database]
+password = "secret_changed"
+
+[[database.replicas]]
+host = "replica1.internal"
+port = 5433
+
+[logging]
+level = "debug"
+
+[logging.rotate]
+enabled = false
+max_size_mb = 50
+keep-files = 3
+
+[cache]
+enabled = 1
+ttl-seconds = 500
+
+[[cache.servers]]
+host = "redis1.internal"
+port = 6379
+features = ["auth", "metrics", "web_ui"]
+
+[[admins]]
+name = "Alice"
+email = "alice@example.com"

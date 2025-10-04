@@ -1,0 +1,59 @@
+app:
+  name: myapp
+  debug: false
+  port: 8080
+  class: true
+
+database:
+  host: localhost
+  port: 5432
+  user: myuser
+  password: mypass
+  name: mydb
+  replicas:
+    - host: db-replica-1.local
+      port: 5433
+    - host: db-replica-2.local
+      port: 5434
+
+logging:
+  level: info
+  file: logs/app.log
+  rotate:
+    enabled: true
+    keep_files: 5
+
+cache:
+  enabled: true
+  servers:
+    - host: cache1.local
+      port: 6379
+    - host: cache2.local
+      port: 6380
+  ttlSeconds: 300
+
+features:
+  - auth
+  - metrics
+  - notifications
+
+admins:
+  - name: Alice
+    email: alice@example.com
+  - name: Bob
+    email: bob@example.com
+
+environments:
+  dev:
+    app:
+      debug: true
+    database:
+      name: mydb_dev
+      replicas:
+        - host: localhost
+          port: 5435
+  prod-env:
+    logging:
+      level: warn
+    cache:
+      ttl_seconds: 600

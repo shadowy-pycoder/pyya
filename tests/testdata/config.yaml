@@ -1,0 +1,30 @@
+app:
+  name: myapp_changed
+
+database:
+  user: myuser_changed
+  password: mypass_changed
+  name: mydb_changed
+
+logging:
+  level: debug
+  rotate:
+    enabled: 0
+
+cache:
+  servers:
+    - host: cache1.local
+      port: 6379
+  ttlSeconds: 500
+
+features:
+  - auth
+  - metrics
+  - notifications
+
+admins:
+  - name: Alice
+    email: alice@example.com
+
+extra_section:
+  extra: true

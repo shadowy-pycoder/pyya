@@ -33,6 +33,7 @@ def init_config(
     convert_keys_to_snake_case: bool = False,
     add_underscore_prefix_to_keywords: bool = False,
     raise_error_non_identifiers: bool = False,
+    replace_dashes_with_underscores: bool = False,
     merge_configs: bool = True,
     sections_ignored_on_merge: Optional[List[str]] = None,
     validate_data_types: bool = True,
@@ -49,6 +50,7 @@ def init_config(
         convert_keys_to_snake_case: convert config section names to snake case
         add_underscore_prefix_to_keywords: add underscore prefix to Python keywords
         raise_error_non_identifiers: raise error if config section name is not a valid identifier
+        replace_dashes_with_underscores: replace dashes with underscores in section names and keys
         merge_configs: merge default config with production config (setting to `False` disables flags below)
         sections_ignored_on_merge: list of sections to ignore when merging configs
         validate_data_types: raise error if data types in production config are not the same as default
@@ -94,8 +96,10 @@ def init_config(
             err_msg = f'section `{section}` is not a valid identifier, aborting'
             logger.error(err_msg)
             raise PyyaError(err_msg)
+        if replace_dashes_with_underscores:
+            section = section.replace('-', '_')
         if add_underscore_prefix_to_keywords and keyword.iskeyword(section):
-            logger.info(f'section `{section}` is a keyword, renaming to `_{section}`')
+            logger.debug(f'section `{section}` is a keyword, renaming to `_{section}`')
             section = f'_{section}'
         return section
 
@@ -163,7 +167,9 @@ def init_config(
         fields: Dict[Any, Any] = {}
         if path is None:
             path = []
-        class_name = ''.join(part.capitalize() if i > 0 else part for i, part in enumerate(path + [name]))
+        class_name = ''.join(part.capitalize() if i > 0 else part for i, part in enumerate(path + [name])).replace(
+            '-', '_'
+        )
         stub_lines = [f'class {class_name}(Dict[str, Any]):']
         nested_stubs = []
         py_type: Any
@@ -198,7 +204,7 @@ def init_config(
                 if not keyword.iskeyword(section) and section.isidentifier():
                     stub_lines.append(f'    {section}: {py_type.__name__}')
                 fields[section] = (py_type, entry)
-        stub_code = '\n\n'.join(nested_stubs + ['\n'.join(stub_lines)]).replace('-', '_')
+        stub_code = '\n\n'.join(nested_stubs + ['\n'.join(stub_lines)])
         return create_model(name, **fields, __base__=ExtraBase), stub_code
 
     def _get_default_raw_data() -> ConfigType:

@@ -73,6 +73,7 @@ config = init_config(
     convert_keys_to_snake_case = False,
     add_underscore_prefix_to_keywords = False,
     raise_error_non_identifiers = False,
+    replace_dashes_with_underscores = False,
     merge_configs = True,
     sections_ignored_on_merge = ['redis'], # do not include redis in your config
     validate_data_types = True,
@@ -111,6 +112,11 @@ add_underscore_prefix_to_keywords=False
 ```python
 # raise error if key name is not valid Python identifier
 raise_error_non_identifiers=False
+```
+
+```python
+# replace dashes with underscores in section names and keys
+replace_dashes_with_underscores=False
 ```
 
 ```python

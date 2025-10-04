@@ -1,0 +1,62 @@
+[app]
+name = "myapp"
+debug = false
+port = 9090
+mode = "production"
+
+[database]
+host = "db.internal"
+port = 5432
+user = "service"
+password = "secret"
+name = "app_main"
+
+[[database.replicas]]
+host = "replica1.internal"
+port = 5433
+
+[[database.replicas]]
+host = "replica2.internal"
+port = 5434
+
+[logging]
+level = "info"
+file = "logs/app.log"
+
+[logging.rotate]
+enabled = true
+max_size_mb = 50
+keep-files = 3
+
+[cache]
+enabled = true
+ttl-seconds = 300
+
+[[cache.servers]]
+host = "redis1.internal"
+port = 6379
+
+[[cache.servers]]
+host = "redis2.internal"
+port = 6380
+features = ["auth", "metrics", "web_ui"]
+
+[[admins]]
+name = "Alice"
+email = "alice@example.com"
+
+[[admins]]
+name = "Bob"
+email = "bob@example.com"
+
+[environments.dev]
+app.debug = true
+app.mode = "development"
+database.name = "app_dev"
+logging.level = "debug"
+
+[environments.prod]
+app.debug = false
+app.mode = "production"
+logging.level = "warn"
+cache.ttl_seconds = 600

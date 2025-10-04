@@ -10,3 +10,5 @@ pyya.egg-info/dependency_links.txt
 pyya.egg-info/entry_points.txt
 pyya.egg-info/requires.txt
 pyya.egg-info/top_level.txt
+tests/test_toml.py
+tests/test_yaml.py

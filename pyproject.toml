@@ -1,6 +1,6 @@
 [project]
 name = "pyya"
-version = "0.1.11"
+version = "0.1.12"
 description = "Convert YAML/TOML configuration files to Python objects"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -38,6 +38,11 @@ Repository = "https://github.com/shadowy-pycoder/pyya"
 [project.scripts]
 pyya = "pyya.__main__:main"
 
+[dependency-groups]
+dev = [
+  "pytest>=8.3.5",
+]
+
 [tool.mypy]
 python_version = "3.8"
 cache_dir = ".mypy_cache/strict"
@@ -67,9 +72,6 @@ filterwarnings = [
   "ignore::ResourceWarning",
 ]
 pythonpath = "."
-asyncio_mode = "auto"
-env_files = ".test.env"
-env_override_existing_values = true
 
 [tool.ruff]
 exclude = [
