@@ -41,6 +41,7 @@ pyya = "pyya.__main__:main"
 [dependency-groups]
 dev = [
   "pytest>=8.3.5",
+  "pytest-cov>=5.0.0",
 ]
 
 [tool.mypy]

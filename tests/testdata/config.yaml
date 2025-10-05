@@ -17,11 +17,6 @@ cache:
       port: 6379
   ttlSeconds: 500
 
-features:
-  - auth
-  - metrics
-  - notifications
-
 admins:
   - name: Alice
     email: alice@example.com

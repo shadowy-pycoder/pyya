@@ -1,0 +1,17 @@
+app:
+  name: myapp
+  debug: false
+  port: 8080
+  class: true
+
+database:
+  host: localhost
+  port: 5432
+  user: myuser
+  password: mypass
+  name: mydb
+  replicas:
+    - host: db-replica-1.local
+      port: 5433
+    - host: db-replica-2.local
+      port: 5434

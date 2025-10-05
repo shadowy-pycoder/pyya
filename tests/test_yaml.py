@@ -52,7 +52,7 @@ def test_raise_err_non_identifier() -> None:
         )
 
 
-def test_replace_dashes_with_undescores() -> None:
+def test_replace_dashes_with_underscores() -> None:
     config = pyya.init_config(
         config=config_path,
         default_config=default_config_path,
