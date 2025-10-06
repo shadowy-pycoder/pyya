@@ -57,3 +57,5 @@ environments:
       level: warn
     cache:
       ttl_seconds: 600
+
+flags: []

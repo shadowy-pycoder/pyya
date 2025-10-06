@@ -1,6 +1,6 @@
 [project]
 name = "pyya"
-version = "0.1.12"
+version = "0.1.13"
 description = "Convert YAML/TOML configuration files to Python objects"
 readme = "README.md"
 requires-python = ">=3.8"

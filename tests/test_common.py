@@ -9,9 +9,9 @@ config_path = Path(__file__).parent / 'testdata/config.yaml'
 default_config_path = Path(__file__).parent / 'testdata/default.config.yaml'
 config_wrong_ext = Path(__file__).parent / 'testdata/config.txt'
 config_corrupted = Path(__file__).parent / 'testdata/corrupted.yaml'
-
 config_extra = Path(__file__).parent / 'testdata/extra.yaml'
 default_config_extra = Path(__file__).parent / 'testdata/default_extra.yaml'
+config_stub = Path(__file__).parent / 'testdata/config.pyi'
 
 
 def test_raise_err_default_file_not_found() -> None:
@@ -85,3 +85,37 @@ def test_raise_err_extra_sections_access() -> None:
             default_config=default_config_extra,
         )
         _ = config.database.garbage
+
+
+def test_generate_stub() -> None:
+    assert not config_stub.exists()
+    _ = pyya.init_config(
+        config=config_stub,
+        default_config=default_config_path,
+        _generate_stub=True,  # this private argument is used by CLI tool
+    )
+    assert config_stub.exists()
+    config_stub.unlink()
+
+
+def test_generate_stub_exist() -> None:
+    _ = pyya.init_config(
+        config=config_stub,
+        default_config=default_config_path,
+        _generate_stub=True,
+    )
+    # NOTE: it would be better to use fixture here
+    try:
+        _ = pyya.init_config(
+            config=config_stub,
+            default_config=default_config_path,
+            _generate_stub=True,
+        )
+    except pyya.PyyaError:
+        pass
+    except Exception:
+        pytest.fail(reason='Wrong type of exception')
+    else:
+        pytest.fail(reason="Exception wasn't raised")
+    finally:
+        config_stub.unlink(missing_ok=True)

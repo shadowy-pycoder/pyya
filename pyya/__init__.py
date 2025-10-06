@@ -73,19 +73,13 @@ def init_config(
                     # is it fine to proccess already poped dicts on recursion?
                     entry = _pop_ignored_keys(entry)
             if section not in _raw_data or _raw_data[section] is None:
-                if section not in _raw_data:
-                    _raw_data[section] = entry
-                    logger.debug(f'section `{".".join(sections)}` with value `{entry}` taken from {default_config}')
-                else:
-                    logger.debug(f'section `{".".join(sections)}` already exists in {config}, skipping')
+                _raw_data[section] = entry
+                logger.debug(f'section `{".".join(sections)}` with value `{entry}` taken from {default_config}')
             elif isinstance(entry, Dict):
                 _merge_configs(_raw_data[section], entry, sections)
             # TODO: add support for merging lists
             else:
-                if section not in _raw_data:
-                    _raw_data[section] = _raw_data.pop(section, None)
-                else:
-                    logger.debug(f'section `{".".join(sections)}` already exists in {config}, skipping')
+                logger.debug(f'section `{".".join(sections)}` already exists in {config}, skipping')
             sections.pop()
 
     def _sanitize_section(section: str) -> str:
