@@ -54,17 +54,6 @@ def test_raise_err_default_corrupted() -> None:
         )
 
 
-def test_raise_err_sections_ignored_on_merge() -> None:
-    with pytest.raises(pyya.PyyaError, match=r'Failed parsing `sections_ignored_on_merge`'):
-        _ = pyya.init_config(
-            config=config_path,
-            default_config=default_config_path,
-            sections_ignored_on_merge=[0],  # type: ignore
-            validate_data_types=False,
-            replace_dashes_with_underscores=True,
-        )
-
-
 def test_no_error_config_not_found() -> None:
     _ = pyya.init_config(config='missing.yaml', default_config=default_config_path)
 

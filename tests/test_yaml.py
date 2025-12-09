@@ -20,6 +20,8 @@ def test_default_setup() -> None:
     assert len(config.cache.servers) == 1
     assert len(config.admins) == 1
     assert config.cache.ttlSeconds == 500
+    assert config.errors[1] == 'error 1'
+    assert config.environments['prod-env'][1] == 'test'
 
 
 def test_convert_snake_case() -> None:

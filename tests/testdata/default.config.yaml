@@ -57,5 +57,12 @@ environments:
       level: warn
     cache:
       ttl_seconds: 600
+    1: "test"
 
 flags: []
+
+errors:
+  1: "error 1"
+  2: "error 2"
+  3: "error 3"
+  4: "error 4"

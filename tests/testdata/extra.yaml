@@ -19,3 +19,4 @@ database:
 
 extra:
   garbage: false
+  1: true

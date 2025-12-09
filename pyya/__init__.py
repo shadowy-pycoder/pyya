@@ -82,7 +82,9 @@ def init_config(
                 logger.debug(f'section `{".".join(sections)}` already exists in {config}, skipping')
             sections.pop()
 
-    def _sanitize_section(section: str) -> str:
+    def _sanitize_section(section: Any) -> Any:
+        if not isinstance(section, str):
+            return section
         if convert_keys_to_snake_case:
             logger.debug(f'converting section `{section}` to snake case')
             section = _to_snake(section)
@@ -135,6 +137,7 @@ def init_config(
         @model_validator(mode='before')
         @classmethod
         def validator(cls, values: Any) -> Any:
+            values = {str(k): v for k, v in values.items()}
             if cls.model_config.get('extra') == 'allow':
                 extra, valid = {}, {}
                 for key, value in values.items():
@@ -155,6 +158,11 @@ def init_config(
                     extra_flat.update(data)
             return extra_flat
 
+    def is_identifier(data: Any) -> bool:
+        if not isinstance(data, str):
+            return False
+        return not keyword.iskeyword(data) and data.isidentifier()
+
     def _model_and_stub_from_dict(
         name: str, data: Dict[str, Any], path: Optional[List[str]] = None
     ) -> Tuple[Type[ExtraBase], str]:
@@ -168,11 +176,12 @@ def init_config(
         nested_stubs = []
         py_type: Any
         for section, entry in data.items():
+            if not is_identifier(section):
+                continue
             if isinstance(entry, Dict):
                 nested_model, nested_stub = _model_and_stub_from_dict(section, entry, path + [name])
-                if not keyword.iskeyword(section) and section.isidentifier():
-                    stub_lines.append(f'    {section}: {class_name + section.capitalize()}')
-                    nested_stubs.append(nested_stub)
+                stub_lines.append(f'    {section}: {class_name + section.capitalize()}')
+                nested_stubs.append(nested_stub)
                 fields[section] = (nested_model, entry)
             elif isinstance(entry, list) and entry:
                 first_item = entry[0]
@@ -180,26 +189,22 @@ def init_config(
                     nested_model, nested_stub = _model_and_stub_from_dict(
                         f'{section.capitalize()}_item', first_item, path + [name]
                     )
-                    if not keyword.iskeyword(section) and section.isidentifier():
-                        stub_lines.append(f'    {section}: list[{class_name + section.capitalize()}_item]')
-                        nested_stubs.append(nested_stub)
+                    stub_lines.append(f'    {section}: list[{class_name + section.capitalize()}_item]')
+                    nested_stubs.append(nested_stub)
                     fields[section] = (List[nested_model], entry)  # type: ignore
                 else:
                     py_type = type(first_item)
-                    if not keyword.iskeyword(section) and section.isidentifier():
-                        stub_lines.append(f'    {section}: list[{py_type.__name__}]')
+                    stub_lines.append(f'    {section}: list[{py_type.__name__}]')
                     fields[section] = (List[py_type], entry)
             elif isinstance(entry, list):
-                if not keyword.iskeyword(section) and section.isidentifier():
-                    stub_lines.append(f'    {section}: list[Any]')
+                stub_lines.append(f'    {section}: list[Any]')
                 fields[section] = (List[Any], entry)
             else:
                 py_type = type(entry)
-                if not keyword.iskeyword(section) and section.isidentifier():
-                    stub_lines.append(f'    {section}: {py_type.__name__}')
+                stub_lines.append(f'    {section}: {py_type.__name__}')
                 fields[section] = (py_type, entry)
         if len(stub_lines) == 1:
-            stub_lines[0] += ' ...'
+            stub_lines = [f'class {class_name}(dict[Any, Any]): ...']
         stub_code = '\n\n'.join(nested_stubs + ['\n'.join(stub_lines)])
         return create_model(name, **fields, __base__=ExtraBase), stub_code
 

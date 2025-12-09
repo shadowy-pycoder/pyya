@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyya
-Version: 0.1.13
+Version: 0.1.14
 Summary: Convert YAML/TOML configuration files to Python objects
 Author-email: shadowy-pycoder <shadowy-pycoder@example.com>
 Project-URL: Homepage, https://github.com/shadowy-pycoder/pyya
