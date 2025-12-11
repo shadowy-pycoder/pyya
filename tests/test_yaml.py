@@ -22,6 +22,7 @@ def test_default_setup() -> None:
     assert config.cache.ttlSeconds == 500
     assert config.errors[1] == 'error 1'
     assert config.environments['prod-env'][1] == 'test'
+    assert config.logging.handlers.console['class'] == 'logging.StreamHandler'
 
 
 def test_convert_snake_case() -> None:

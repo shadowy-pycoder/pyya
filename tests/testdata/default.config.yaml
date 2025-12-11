@@ -22,6 +22,14 @@ logging:
   rotate:
     enabled: true
     keep_files: 5
+  version: 1
+  formatters:
+    default:
+      format: "%(asctime)-15s \t%(levelname)-8s \t%(name)-8s\t %(filename)s:%(lineno)s \t%(message)s"
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: default
 
 cache:
   enabled: true
